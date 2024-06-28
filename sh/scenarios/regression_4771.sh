@@ -6,7 +6,9 @@ source "$NCTL"/sh/node/svc_"$NCTL_DAEMON_TYPE".sh
 source "$NCTL"/sh/scenarios/common/itst.sh
 
 #######################################
-# TODO
+# This test checks if the entry point of an installed contact can successfully be invoked.
+#
+# It covers against the regression captured in the #4771 ticket.
 #######################################
 function main() {
     log "------------------------------------------------------------"
@@ -15,12 +17,12 @@ function main() {
 
     do_await_genesis_era_to_complete
     TX_HASH=$(install_contract)
-    log "TX_HASH: $TX_HASH"
+    log "Install contract transaction hash: $TX_HASH"
     await_n_blocks 2
     ENTITY_CONTRACT=$(get_entity_contract $TX_HASH)
-    log "ENTITY_CONTRACT: $ENTITY_CONTRACT"
+    log "Contract entity: $ENTITY_CONTRACT"
     INVOKE_ENTRY_POINT_RESULT=$(call_entry_point $ENTITY_CONTRACT)
-    log "INVOKE_ENTRY_POINT_RESULT: $INVOKE_ENTRY_POINT_RESULT"
+    log "Result of entry point invocation: $INVOKE_ENTRY_POINT_RESULT"
 
     if [[ "$INVOKE_ENTRY_POINT_RESULT" == *"unknown node error code (68)"* ]]; then
         log "Test failed: contract not found"

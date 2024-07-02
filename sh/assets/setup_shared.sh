@@ -459,7 +459,6 @@ function setup_asset_node_configs()
             "toml.dump(cfg, open('$PATH_TO_CONFIG_FILE', 'w'));"
         )
 
-        #TODO[RC]: Remove the line that adds the 'storage' key once the sidecar is updated to not require it for RPC only instances.
         if [ -f "$PATH_TO_SIDECAR_TEMPLATE" ]; then
             # Prepare the sidecar config file.
             cp "$PATH_TO_SIDECAR_TEMPLATE" "$PATH_TO_SIDECAR_CONFIG_FILE"
@@ -469,7 +468,6 @@ function setup_asset_node_configs()
                 "cfg['rpc_server']['main_server']['address']='0.0.0.0:$(get_node_port_rpc "$IDX")';"
                 "cfg['rpc_server']['speculative_exec_server']['address']='0.0.0.0:$(get_node_port_speculative_exec "$IDX")';"
                 "cfg['rpc_server']['node_client']['address']='0.0.0.0:$(get_node_port_binary "$IDX")';"
-                "cfg['storage']={'storage_folder': '.'};"
                 "toml.dump(cfg, open('$PATH_TO_SIDECAR_CONFIG_FILE', 'w'));"
             )
         fi

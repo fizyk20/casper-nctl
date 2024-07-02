@@ -90,7 +90,6 @@ function do_await_network_upgrade() {
             exit 1
         fi
         WAIT_TIME_SEC=$((WAIT_TIME_SEC + 1))
-        CURRENT_ERA=$(get_chain_era || -1)
         sleep 1.0
     done
 }

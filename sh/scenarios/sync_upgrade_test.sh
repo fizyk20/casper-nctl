@@ -90,6 +90,7 @@ function do_await_network_upgrade() {
             exit 1
         fi
         WAIT_TIME_SEC=$((WAIT_TIME_SEC + 1))
+        CURRENT_ERA=$(get_chain_era || -1)
         sleep 1.0
     done
 }
@@ -99,14 +100,12 @@ function assert_network_upgrade() {
     local COUNT
     local RUNNING_COUNT
     local PROTO=${1}
-    local CONVERTED
     log_step "checking that entire network upgraded to $PROTO"
-    CONVERTED=$(echo $PROTO | sed 's/_/./g')
     STATUS=$(nctl-view-node-status)
-    COUNT=$(grep 'api_version' <<< $STATUS[*] | grep -o "$CONVERTED" | wc -l)
+    COUNT=$(grep '"next_upgrade": null' <<< $(nctl-view-node-status)[*] | wc -l)
     RUNNING_COUNT=$(get_running_node_count)
 
-    if [ ! "$COUNT" = "$RUNNING_COUNT" ]; then
+    if [ "$COUNT" -ne "$RUNNING_COUNT" ]; then
         log "ERROR: Upgrade failed, $COUNT out of $RUNNING_COUNT upgraded successfully."
         exit 1
     fi

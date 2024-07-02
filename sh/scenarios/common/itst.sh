@@ -397,7 +397,7 @@ function verify_transfer_inclusion() {
 
     if [ "$WALKBACK" -gt 0 ]; then
         BLOCK_HEADER=$(echo "$JSON_OUT" | jq '.result.block_with_signatures.block.Version2.header')
-        BLOCK_TRANSFER_HASHES=$(echo "$JSON_OUT" | jq -r '.result.block_with_signatures.block.Version2.body.mint[]')
+        BLOCK_TRANSFER_HASHES=$(echo "$JSON_OUT" | jq -r '.result.block_with_signatures.block.Version2.body.transactions."0"')
         if grep -q "${TRANSFER}" <<< "$BLOCK_TRANSFER_HASHES"; then
             log "Transfer: $TRANSFER found in block!"
         else
@@ -431,7 +431,7 @@ function verify_wasm_inclusion() {
 
     if [ "$WALKBACK" -gt 0 ]; then
         BLOCK_HEADER=$(echo "$JSON_OUT" | jq '.result.block_with_signatures.block.Version2.header')
-        BLOCK_DEPLOY_HASHES=$(echo "$JSON_OUT" | jq -r '.result.block_with_signatures.block.Version2.body.standard[]')
+        BLOCK_DEPLOY_HASHES=$(echo "$JSON_OUT" | jq -r '.result.block_with_signatures.block.Version2.body.transactions')
         if grep -q "${DEPLOY_HASH}" <<< "$BLOCK_DEPLOY_HASHES"; then
             log "DEPLOY: $DEPLOY_HASH found in block!"
         else
@@ -472,7 +472,7 @@ function assert_node_proposed() {
             BLOCK="$(echo "$VERSIONED_BLOCK" | jq '.Version1')"
         fi
 
-        PROPOSER=$(echo "$BLOCK" | jq -r '.body.proposer')
+        PROPOSER=$(echo "$BLOCK" | jq -r '.header.proposer')
 
         if [ "$PROPOSER" == "$PUBLIC_KEY_HEX" ]; then
             log "Node-$NODE_ID created a block!"
@@ -516,7 +516,7 @@ function assert_no_proposal_walkback() {
         else
             BLOCK="$(echo "$VERSIONED_BLOCK" | jq '.Version1')"
         fi
-        PROPOSER=$(echo "$BLOCK" | jq -r '.body.proposer')
+        PROPOSER=$(echo "$BLOCK" | jq -r '.header.proposer')
         if [ "$PROPOSER" = "$PUBLIC_KEY_HEX" ]; then
             log "ERROR: Node proposal found!"
             log "BLOCK HASH $CHECK_HASH: PROPOSER=$PROPOSER, NODE_KEY_HEX=$PUBLIC_KEY_HEX"

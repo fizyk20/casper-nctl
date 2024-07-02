@@ -24,7 +24,7 @@ function main() {
     INVOKE_ENTRY_POINT_RESULT=$(call_entry_point $ENTITY_CONTRACT)
     log "Result of entry point invocation: $INVOKE_ENTRY_POINT_RESULT"
 
-    if [[ "$INVOKE_ENTRY_POINT_RESULT" == *"unknown node error code (68)"* ]]; then
+    if [[ "$INVOKE_ENTRY_POINT_RESULT" == *"no such contract at hash"* ]]; then
         log "Test failed: contract not found"
         exit 1
     fi

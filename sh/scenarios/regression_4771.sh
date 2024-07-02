@@ -29,6 +29,12 @@ function main() {
         exit 1
     fi
 
+    MAYBE_ERROR_CODE=$(jq '.code' <(echo $INVOKE_ENTRY_POINT_RESULT | grep -o '{.*}'))
+    if [ "$MAYBE_ERROR_CODE" != "null" ]; then
+        log "Test failed: endpoint invocation resulted in an error"
+        exit 1
+    fi
+
     log "------------------------------------------------------------"
     log "Regression 4771 test finished"
     log "------------------------------------------------------------"

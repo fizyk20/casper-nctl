@@ -84,6 +84,8 @@ function get_entity_contract() {
     local TX_HASH=${1}
     local PATH_TO_CLIENT
     local NODE_ADDRESS
+    local ENTITY_CONTRACT
+    local ERROR_MESSAGE
 
     PATH_TO_CLIENT=$(get_path_to_client)
     NODE_ADDRESS=$(get_node_address_rpc)
@@ -93,6 +95,12 @@ function get_entity_contract() {
             --node-address "$NODE_ADDRESS" \
             $TX_HASH
         )
+
+    ERROR_MESSAGE=$(echo $GET_TRANSACTION_RESULT | jq '.result.execution_info.execution_result.Version2.error_message')
+    if [ "$ERROR_MESSAGE" != "null" ]; then
+        log "Test failed: contract installation error: $ERROR_MESSAGE" >&2
+        exit 1
+    fi
 
     ENTITY_CONTRACT=$(echo $GET_TRANSACTION_RESULT | \
         jq '.result.execution_info.execution_result.Version2.effects[] | select(.key | startswith("entity-contract"))' | \

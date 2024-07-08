@@ -99,9 +99,17 @@ function assert_network_upgrade() {
     local COUNT
     local RUNNING_COUNT
     local PROTO=${1}
+    local CONVERTED
     log_step "checking that entire network upgraded to $PROTO"
+    CONVERTED=$(echo $PROTO | sed 's/_/./g')
+
+    # Give some time for the nodes to upgrade.
     STATUS=$(nctl-view-node-status)
-    COUNT=$(grep '"next_upgrade": null' <<< $(nctl-view-node-status)[*] | wc -l)
+    while [[ "$STATUS" != *"protocol_version"* ]]; do
+        sleep 1.0
+        STATUS=$(nctl-view-node-status)
+    done
+    COUNT=$(grep 'protocol_version' <<< $STATUS[*] | grep -o "$CONVERTED" | wc -l)
     RUNNING_COUNT=$(get_running_node_count)
 
     if [ "$COUNT" -ne "$RUNNING_COUNT" ]; then

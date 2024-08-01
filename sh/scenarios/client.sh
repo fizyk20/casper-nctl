@@ -77,7 +77,7 @@ function main() {
     # 0. Wait for network start up
     do_await_genesis_era_to_complete
     # 1. Check Subcommand Count
-    compare_client_subcommand_count "$(get_client_subcommand_count)" "31"
+    compare_client_subcommand_count "$(get_client_subcommand_count)" "34"
     # 2. Test Each Subcommand Outputs Help
     test_subcommand_help
     # 3. Test generate-completion subcommand: Each SHELL
@@ -1410,7 +1410,7 @@ function compare_client_subcommand_count() {
 
     log_step "Comparing client subcommand count..."
 
-    if [ "$COMP1" = "$COMP2" ]; then
+    if [ "$COMP1" -eq "$COMP2" ]; then
         log "$COMP1 = $COMP2 [expected]"
     else
         log "ERROR: $COMP1 != $COMP2"
